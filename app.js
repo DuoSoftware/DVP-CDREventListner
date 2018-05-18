@@ -14,7 +14,7 @@ var hostIp = config.Host.Ip;
 var hostPort = config.Host.Port;
 
 var server = restify.createServer({
-    name: 'DVP-CDRProcessor'
+    name: 'DVP-CDREventListner'
 });
 
 
@@ -36,12 +36,12 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
 
     try
     {
-        logger.info('[DVP-CDRProcessor.ProcessCDR] - [%s] - FS CDR Request Received', reqId);
+        logger.info('[DVP-CDREventListner.ProcessCDR] - [%s] - FS CDR Request Received', reqId);
         var cdrObj = req.body;
 
         var rawCDR = JSON.stringify(cdrObj);
 
-        logger.debug('[DVP-CDRProcessor.ProcessCDR] - [%s] - CDR Request Params : %s', reqId, rawCDR);
+        logger.debug('[DVP-CDREventListner.ProcessCDR] - [%s] - CDR Request Params : %s', reqId, rawCDR);
 
         var varSec = cdrObj['variables'];
         var callFlowSec = cdrObj['callflow'];
@@ -345,6 +345,8 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                     //add to queue
                     cdr.TryCount = 0;
 
+                    console.log('================== NEW A LEG PUBLISH TO QUEUE - UUID : ' + cdr.Uuid + ' ==================');
+
                     amqpPublisher('CDRQUEUE', cdr);
                 }
                 else
@@ -360,6 +362,7 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                                 if(callLeg1)
                                 {
                                     callLeg1.TryCount = 0;
+                                    console.log('================== B LEG FOUND PUBLISH QUEUE VIA ORIGINATED LEG - UUID : ' + callLeg1.Uuid + ' ==================');
                                     amqpPublisher('CDRQUEUE', callLeg1);
                                 }
                             })
@@ -375,6 +378,7 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                                         if(callLeg2)
                                         {
                                             callLeg2.TryCount = 0;
+                                            console.log('================== B LEG FOUND PUBLISH QUEUE VIA CALL_UUID - UUID : ' + callLeg2.Uuid + ' ==================');
                                             amqpPublisher('CDRQUEUE', callLeg2);
                                         }
                                     })
@@ -390,6 +394,7 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                                                 if(callLeg3)
                                                 {
                                                     callLeg3.TryCount = 0;
+                                                    console.log('================== B LEG FOUND PUBLISH QUEUE VIA MEMBER_UUID - UUID : ' + callLeg3.Uuid + ' ==================');
                                                     amqpPublisher('CDRQUEUE', callLeg3);
                                                 }
                                             })

@@ -38,8 +38,6 @@ queueConnection.on('error', function (error) {
 
 module.exports.PublishToQueue = function(messageType,sendObj ) {
 
-    logger.info("Email Send : " + JSON.stringify(sendObj));
-
     try {
         if (sendObj) {
             queueConnection.publish(messageType, sendObj, {
