@@ -83,7 +83,6 @@ if(redismode != "cluster") {
 
 }
 
-
 var GetObject = function(key, callback)
 {
     try
