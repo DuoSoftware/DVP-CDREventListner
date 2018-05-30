@@ -26,11 +26,11 @@
     "dvp-mongomodels": "^4.8.36",
     "ioredis": "^3.1.1",
     "mongoose": "^4.6.8",
-    "node-uuid": "^1.4.3",
     "redis": "^2.6.2",
     "restify": "^4.0.3",
     "restify-jwt": "^0.4.0",
     "stringformat": "0.0.5",
-    "stringify": "^3.1.0"
+    "stringify": "^3.1.0",
+    "uuid": "^3.2.1"
   }
 }
