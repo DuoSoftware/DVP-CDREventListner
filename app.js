@@ -353,6 +353,14 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
 
                         amqpPublisher('CDRQUEUE', cdr);
                     }
+                    else if(cdr.Direction === 'outbound' && cdr.ObjCategory === 'DIALER')
+                    {
+                        cdr.TryCount = 0;
+
+                        logger.debug('[DVP-CDREventListner.ProcessCDR] - [%s] - ================== NEW DIALER A LEG PUBLISH TO QUEUE - UUID : [%s] ==================', reqId, cdr.Uuid);
+
+                        amqpPublisher('CDRQUEUE', cdr);
+                    }
                     else
                     {
                         //Check Redis
