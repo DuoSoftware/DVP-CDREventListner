@@ -245,14 +245,14 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                     agentSkill = decodeURIComponent(varSec['ards_skill_display']);
                 }
 
-                var duration = varSec['duration'];
-                var billSec = varSec['billsec'];
-                var holdSec = varSec['hold_accum_seconds'];
-                var progressSec = varSec['progresssec'];
-                var answerSec = varSec['answersec'];
-                var waitSec = varSec['waitsec'];
-                var progressMediaSec = varSec['progress_mediasec'];
-                var flowBillSec = varSec['flow_billsec'];
+                var duration = varSec['duration'] ? parseInt(varSec['duration']) : 0;
+                var billSec = varSec['billsec'] ? parseInt(varSec['billsec']) : 0;
+                var holdSec = varSec['hold_accum_seconds'] ? parseInt(varSec['hold_accum_seconds']) : 0;
+                var progressSec = varSec['progresssec'] ? parseInt(varSec['progresssec']) : 0;
+                var answerSec = varSec['answersec'] ? parseInt(varSec['answersec']) : 0;
+                var waitSec = varSec['waitsec'] ? parseInt(varSec['waitsec']) : 0;
+                var progressMediaSec = varSec['progress_mediasec'] ? parseInt(varSec['progress_mediasec']) : 0;
+                var flowBillSec = varSec['flow_billsec'] ? parseInt(varSec['flow_billsec']) : 0;
 
                 var isAnswered = false;
 
