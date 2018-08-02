@@ -42,7 +42,7 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
         if(cdrObj)
         {
             var rawCDR = JSON.stringify(cdrObj);
-
+            amqpPublisher('DigInCDRs', rawCDR);
             logger.debug('[DVP-CDREventListner.ProcessCDR] - [%s] - CDR Request Params : %s', reqId, rawCDR);
 
             var varSec = cdrObj['variables'];
