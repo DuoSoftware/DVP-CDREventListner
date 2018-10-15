@@ -113,3 +113,4 @@ client.on('error', function(msg)
 });
 
 module.exports.GetObject = GetObject;
+module.exports.client = client;

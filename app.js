@@ -8,7 +8,8 @@ var amqpPublisher = require('./AMQPHandler.js').PublishToQueue;
 var authorization = require('dvp-common/Authentication/Authorization.js');
 var redisHandler = require('./RedisHandler.js');
 var mongoDbOp = require('./MongoDBOperations.js');
-
+var healthcheck = require('dvp-healthcheck/DBHealthChecker');
+var mongomodels = require('dvp-mongomodels');
 
 var hostIp = config.Host.Ip;
 var hostPort = config.Host.Port;
@@ -29,6 +30,8 @@ server.use(restify.acceptParser(server.acceptable));
 server.use(restify.queryParser());
 server.use(restify.bodyParser());
 
+var hc = new healthcheck(server, {redis: redisHandler.client, pg: dbModel.SequelizeConn, mongo: mongomodels.connection});
+hc.Initiate();
 
 server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,next)
 {
