@@ -337,11 +337,11 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                     cdr.ObjType = advOpAction;
                 }
 
-                if(dvpCallDirection === 'inbound' && callFlowSec[callFlowSec.length].times)
+                if(dvpCallDirection === 'inbound' && callFlowSec[callFlowSec.length - 1].times)
                 {
-                    var callFlowTransferTime = callFlowSec[callFlowSec.length].times.transfer_time;
-                    var callFlowBridgeTime = callFlowSec[callFlowSec.length].times.bridged_time;
-                    var callFlowAnswerTime = callFlowSec[callFlowSec.length].times.answered_time;
+                    var callFlowTransferTime = callFlowSec[callFlowSec.length - 1].times.transfer_time;
+                    var callFlowBridgeTime = callFlowSec[callFlowSec.length - 1].times.bridged_time;
+                    var callFlowAnswerTime = callFlowSec[callFlowSec.length - 1].times.answered_time;
 
                     if(callFlowTransferTime > 0 && callFlowAnswerTime > 0)
                     {
