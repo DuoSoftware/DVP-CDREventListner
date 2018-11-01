@@ -337,6 +337,27 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                     cdr.ObjType = advOpAction;
                 }
 
+                if(dvpCallDirection === 'inbound' && callFlowSec[callFlowSec.length].times)
+                {
+                    var callFlowTransferTime = callFlowSec[callFlowSec.length].times.transfer_time;
+                    var callFlowBridgeTime = callFlowSec[callFlowSec.length].times.bridged_time;
+                    var callFlowAnswerTime = callFlowSec[callFlowSec.length].times.answered_time;
+
+                    if(callFlowTransferTime > 0 && callFlowAnswerTime > 0)
+                    {
+                        cdr.TimeAfterInitialBridge = Math.round((callFlowTransferTime - callFlowAnswerTime)/1000000);
+                    }
+                    else if(callFlowBridgeTime > 0 && callFlowAnswerTime > 0)
+                    {
+                        cdr.TimeAfterInitialBridge = Math.round((callFlowBridgeTime - callFlowAnswerTime)/1000000);
+                    }
+                    else
+                    {
+                        cdr.TimeAfterInitialBridge = 0;
+                    }
+
+                }
+
 
                 var cdrSave = dbModel.CallCDR.build(cdr);
 
