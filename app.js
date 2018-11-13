@@ -341,15 +341,16 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                 {
                     var callFlowTransferTime = callFlowSec[callFlowSec.length - 1].times.transfer_time;
                     var callFlowBridgeTime = callFlowSec[callFlowSec.length - 1].times.bridged_time;
-                    var callFlowAnswerTime = callFlowSec[callFlowSec.length - 1].times.answered_time;
+                    //var callFlowAnswerTime = callFlowSec[callFlowSec.length - 1].times.answered_time;
+                    var callFlowCreatedTime = callFlowSec[callFlowSec.length - 1].times.created_time;
 
-                    if(callFlowTransferTime > 0 && callFlowAnswerTime > 0)
+                    if(callFlowTransferTime > 0 && callFlowCreatedTime > 0)
                     {
-                        cdr.TimeAfterInitialBridge = Math.round((callFlowTransferTime - callFlowAnswerTime)/1000000);
+                        cdr.TimeAfterInitialBridge = Math.round((callFlowTransferTime - callFlowCreatedTime)/1000000);
                     }
-                    else if(callFlowBridgeTime > 0 && callFlowAnswerTime > 0)
+                    else if(callFlowBridgeTime > 0 && callFlowCreatedTime > 0)
                     {
-                        cdr.TimeAfterInitialBridge = Math.round((callFlowBridgeTime - callFlowAnswerTime)/1000000);
+                        cdr.TimeAfterInitialBridge = Math.round((callFlowBridgeTime - callFlowCreatedTime)/1000000);
                     }
                     else
                     {
