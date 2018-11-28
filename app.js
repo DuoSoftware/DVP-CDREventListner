@@ -105,9 +105,25 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                 {
                     if(opCat === 'AGENT')
                     {
-                        sipFromUser = varSec['sip_to_user'];
-                        sipResource = varSec['sip_to_user'];
-                        sipToUser = varSec['sip_from_user'];
+                        if(varSec['sip_to_user'])
+                        {
+                            sipFromUser = varSec['sip_to_user'];
+                            sipResource = varSec['sip_to_user'];
+                        }
+                        else
+                        {
+                            sipFromUser = varSec['dialed_user'];
+                            sipResource = varSec['dialed_user'];
+                        }
+
+                        if(varSec['sip_from_user'])
+                        {
+                            sipToUser = varSec['sip_from_user'];
+                        }
+                        else
+                        {
+                            sipToUser = varSec['origination_caller_id_number'];
+                        }
                     }
                     else if((advOpAction === 'BLAST' || advOpAction === 'DIRECT' || advOpAction === 'IVRCALLBACK') && opCat === 'CUSTOMER')
                     {
