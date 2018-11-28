@@ -483,6 +483,16 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
     return next();
 });
 
+server.post('/DVP/API/:version/CDREventListner/TestMethod', function(req,res,next){
+
+    console.log("====================TEST METHOD=====================");
+
+    console.log(req.body);
+
+    res.end("{}");
+
+});
+
 server.listen(hostPort, hostIp, function () {
     console.log('%s listening at %s', server.name, server.url);
 });
