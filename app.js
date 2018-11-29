@@ -145,6 +145,11 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                 var companyId = varSec['companyid'];
                 var tenantId = varSec['tenantid'];
                 var bUnit = varSec['business_unit'];
+                
+                if(varSec['queue_business_unit'])
+                {
+                    bUnit = varSec['queue_business_unit'];
+                }
 
                 var currentApp = varSec['current_application'];
                 var confName = varSec['DVP_CONFERENCE_NAME'];
