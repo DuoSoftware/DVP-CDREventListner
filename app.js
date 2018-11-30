@@ -262,6 +262,8 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                     bUnit = 'default';
                 }
 
+                var ardsPriority = varSec['ards_priority'];
+
                 var agentSkill = '';
 
                 if(varSec['ards_skill_display'])
@@ -325,8 +327,10 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                     SipResource: sipResource,
                     CampaignId: campaignId,
                     CampaignName: campaignName,
-                    BusinessUnit: bUnit
+                    BusinessUnit: bUnit,
+                    QueuePriority: ardsPriority
                 };
+
 
 
                 if(actionCat === 'CONFERENCE')
