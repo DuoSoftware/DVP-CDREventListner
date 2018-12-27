@@ -128,8 +128,8 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                     else if((advOpAction === 'BLAST' || advOpAction === 'DIRECT' || advOpAction === 'IVRCALLBACK') && opCat === 'CUSTOMER')
                     {
                         //NEED TO IMPLEMENT
-                        sipFromUser = varSec['origination_caller_id_number'];
-                        sipToUser = varSec['sip_to_user'];
+                        sipFromUser = varSec['dialer_from_number'];
+                        sipToUser = varSec['dialer_to_number'];
                     }
                 }
                 else if(direction === 'inbound' && dvpCallDirection === 'inbound')
