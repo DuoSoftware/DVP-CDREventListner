@@ -8,7 +8,8 @@ var amqpPublisher = require('./AMQPHandler.js').PublishToQueue;
 var authorization = require('dvp-common/Authentication/Authorization.js');
 var redisHandler = require('./RedisHandler.js');
 var mongoDbOp = require('./MongoDBOperations.js');
-
+var healthcheck = require('dvp-healthcheck/DBHealthChecker');
+var mongomodels = require('dvp-mongomodels');
 
 var hostIp = config.Host.Ip;
 var hostPort = config.Host.Port;
@@ -29,6 +30,8 @@ server.use(restify.acceptParser(server.acceptable));
 server.use(restify.queryParser());
 server.use(restify.bodyParser());
 
+var hc = new healthcheck(server, {redis: redisHandler.client, pg: dbModel.SequelizeConn, mongo: mongomodels.connection});
+hc.Initiate();
 
 server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,next)
 {
@@ -102,15 +105,31 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                 {
                     if(opCat === 'AGENT')
                     {
-                        sipFromUser = varSec['sip_to_user'];
-                        sipResource = varSec['sip_to_user'];
-                        sipToUser = varSec['sip_from_user'];
+                        if(varSec['sip_to_user'])
+                        {
+                            sipFromUser = varSec['sip_to_user'];
+                            sipResource = varSec['sip_to_user'];
+                        }
+                        else
+                        {
+                            sipFromUser = varSec['dialed_user'];
+                            sipResource = varSec['dialed_user'];
+                        }
+
+                        if(varSec['sip_from_user'])
+                        {
+                            sipToUser = varSec['sip_from_user'];
+                        }
+                        else
+                        {
+                            sipToUser = varSec['origination_caller_id_number'];
+                        }
                     }
                     else if((advOpAction === 'BLAST' || advOpAction === 'DIRECT' || advOpAction === 'IVRCALLBACK') && opCat === 'CUSTOMER')
                     {
                         //NEED TO IMPLEMENT
-                        sipFromUser = varSec['origination_caller_id_number'];
-                        sipToUser = varSec['sip_to_user'];
+                        sipFromUser = varSec['dialer_from_number'];
+                        sipToUser = varSec['dialer_to_number'];
                     }
                 }
                 else if(direction === 'inbound' && dvpCallDirection === 'inbound')
@@ -126,6 +145,11 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                 var companyId = varSec['companyid'];
                 var tenantId = varSec['tenantid'];
                 var bUnit = varSec['business_unit'];
+                
+                if(varSec['queue_business_unit'])
+                {
+                    bUnit = varSec['queue_business_unit'];
+                }
 
                 var currentApp = varSec['current_application'];
                 var confName = varSec['DVP_CONFERENCE_NAME'];
@@ -238,6 +262,8 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                     bUnit = 'default';
                 }
 
+                var ardsPriority = varSec['ards_priority'];
+
                 var agentSkill = '';
 
                 if(varSec['ards_skill_display'])
@@ -301,8 +327,10 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                     SipResource: sipResource,
                     CampaignId: campaignId,
                     CampaignName: campaignName,
-                    BusinessUnit: bUnit
+                    BusinessUnit: bUnit,
+                    QueuePriority: ardsPriority
                 };
+
 
 
                 if(actionCat === 'CONFERENCE')
@@ -332,6 +360,28 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                 if(actionCat === 'DIALER' && advOpAction)
                 {
                     cdr.ObjType = advOpAction;
+                }
+
+                if(dvpCallDirection === 'inbound' && callFlowSec[callFlowSec.length - 1].times)
+                {
+                    var callFlowTransferTime = callFlowSec[callFlowSec.length - 1].times.transfer_time;
+                    var callFlowBridgeTime = callFlowSec[callFlowSec.length - 1].times.bridged_time;
+                    //var callFlowAnswerTime = callFlowSec[callFlowSec.length - 1].times.answered_time;
+                    var callFlowCreatedTime = callFlowSec[callFlowSec.length - 1].times.created_time;
+
+                    if(callFlowTransferTime > 0 && callFlowCreatedTime > 0)
+                    {
+                        cdr.TimeAfterInitialBridge = Math.round((callFlowTransferTime - callFlowCreatedTime)/1000000);
+                    }
+                    else if(callFlowBridgeTime > 0 && callFlowCreatedTime > 0)
+                    {
+                        cdr.TimeAfterInitialBridge = Math.round((callFlowBridgeTime - callFlowCreatedTime)/1000000);
+                    }
+                    else
+                    {
+                        cdr.TimeAfterInitialBridge = 0;
+                    }
+
                 }
 
 
@@ -456,6 +506,16 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
     }
 
     return next();
+});
+
+server.post('/DVP/API/:version/CDREventListner/TestMethod', function(req,res,next){
+
+    console.log("====================TEST METHOD=====================");
+
+    console.log(req.body);
+
+    res.end("{}");
+
 });
 
 server.listen(hostPort, hostIp, function () {

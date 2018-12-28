@@ -1,4 +1,3 @@
-var mongomodels = require('dvp-mongomodels');
 var RawCdr = require('dvp-mongomodels/model/Cdr').Cdr;
 var config = require('config');
 
