@@ -403,7 +403,7 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
 
                         amqpPublisher('CDRQUEUE', cdr);
                     }
-                    else if(cdr.Direction === 'outbound' && cdr.ObjCategory === 'DIALER')
+                    else if(cdr.Direction === 'outbound' && varSec['DVP_ACTION_CAT'] === 'DIALER' && varSec['CALL_LEG_TYPE'] === 'CUSTOMER')
                     {
                         cdr.TryCount = 0;
 
