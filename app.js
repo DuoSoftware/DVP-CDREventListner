@@ -374,11 +374,7 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                 {
                     if(varSec['CALL_LEG_TYPE'] === 'CUSTOMER')
                     {
-                        cdr.ObjType = 'DIALER'
-                    }
-                    else if(varSec['CALL_LEG_TYPE'] === 'AGENT')
-                    {
-                        cdr.ObjType = 'AGENT'
+                        cdr.ObjCategory = 'DIALER'
                     }
 
                 }
