@@ -346,10 +346,7 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                     cdr.ExtraData = confName;
                 }
 
-                if(actionCat)
-                {
-                    cdr.ObjCategory = actionCat;
-                }
+
 
                 if(currentApp === 'voicemail')
                 {
@@ -375,6 +372,14 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                     if(varSec['CALL_LEG_TYPE'] === 'CUSTOMER')
                     {
                         cdr.ObjCategory = 'DIALER'
+                    }
+
+                }
+                else
+                {
+                    if(actionCat)
+                    {
+                        cdr.ObjCategory = actionCat;
                     }
 
                 }
