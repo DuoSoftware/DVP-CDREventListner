@@ -129,7 +129,7 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                     {
                         if(varSec['DVP_OPERATION_CAT'] === 'AGENT')
                         {
-                            sipFromUser = varSec['DialerAgentName'];
+                            sipFromUser = varSec['DialerAgentSipName'];
                             sipToUser = varSec['DialerCustomerNumber'];
                         }
                         else if(varSec['DVP_OPERATION_CAT'] === 'CUSTOMER')
