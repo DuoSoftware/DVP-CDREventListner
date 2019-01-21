@@ -103,7 +103,7 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
 
                 if(actionCat === 'DIALER')
                 {
-                    if(opCat === 'AGENT')
+                    /*if(varSec['CALL_LEG_TYPE'] === 'AGENT')
                     {
                         if(varSec['sip_to_user'])
                         {
@@ -124,12 +124,20 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                         {
                             sipToUser = varSec['origination_caller_id_number'];
                         }
-                    }
-                    else if((advOpAction === 'BLAST' || advOpAction === 'DIRECT' || advOpAction === 'IVRCALLBACK') && opCat === 'CUSTOMER')
+                    }*/
+                    if(varSec['CALL_LEG_TYPE'] === 'CUSTOMER')
                     {
-                        //NEED TO IMPLEMENT
-                        sipFromUser = varSec['dialer_from_number'];
-                        sipToUser = varSec['dialer_to_number'];
+                        if(varSec['DVP_OPERATION_CAT'] === 'AGENT')
+                        {
+                            sipFromUser = varSec['DialerAgentName'];
+                            sipToUser = varSec['DialerCustomerNumber'];
+                        }
+                        else if(varSec['DVP_OPERATION_CAT'] === 'CUSTOMER')
+                        {
+                            sipFromUser = varSec['dialer_from_number'];
+                            sipToUser = varSec['dialer_to_number'];
+                        }
+
                     }
                 }
                 else if(direction === 'inbound' && dvpCallDirection === 'inbound')
@@ -360,6 +368,19 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                 if(actionCat === 'DIALER' && advOpAction)
                 {
                     cdr.ObjType = advOpAction;
+                }
+
+                if(varSec['DVP_ACTION_CAT'] === 'DIALER')
+                {
+                    if(varSec['CALL_LEG_TYPE'] === 'CUSTOMER')
+                    {
+                        cdr.ObjType = 'DIALER'
+                    }
+                    else if(varSec['CALL_LEG_TYPE'] === 'AGENT')
+                    {
+                        cdr.ObjType = 'AGENT'
+                    }
+
                 }
 
                 if(dvpCallDirection === 'inbound' && callFlowSec[callFlowSec.length - 1].times)
