@@ -69,5 +69,6 @@ module.exports = {
     },
 
     "Token": "HOST_TOKEN",
+    "SendAbandonCallsToQueue":"HOST_USE_ABANDON_QUEUE",
     "SaveRawCDRMongo": "HOST_SAVE_CDR_MONGO"
 };
