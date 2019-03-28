@@ -33,6 +33,24 @@ server.use(restify.bodyParser());
 var hc = new healthcheck(server, {redis: redisHandler.client, pg: dbModel.SequelizeConn, mongo: mongomodels.connection});
 hc.Initiate();
 
+
+var publishAbandonCallToQueue = function(obj)
+{
+    logger.debug('[DVP-CDREventListner.publishAbandonCallToQueue] - %s', JSON.stringify(obj));
+    logger.debug('[DVP-CDREventListner.publishAbandonCallToQueue] - SendAbandonCallsToQueue : %s', JSON.stringify(obj), config.SendAbandonCallsToQueue);
+    if(config.SendAbandonCallsToQueue && (config.SendAbandonCallsToQueue === true || config.SendAbandonCallsToQueue === 'true'))
+    {
+        //CHeck for abandon call
+        logger.debug('[DVP-CDREngine.publishAbandonCallToQueue] - CHECK ABANDON');
+        if(obj.ObjType === 'HTTAPI' && obj.DVPCallDirection === 'inbound' && obj.IsQueued === true && obj.AgentAnswered === false)
+        {
+            logger.debug('[DVP-CDREngine.publishAbandonCallToQueue] - IS ABANDON CALL PUBLISH TO QUEUE');
+            amqpPublisher('ABANDONED_CALLS', obj)
+        }
+    }
+
+};
+
 server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,next)
 {
     var reqId = uuidv1();
@@ -422,6 +440,8 @@ server.post('/DVP/API/:version/CDREventListner/ProcessCDR', function(req,res,nex
                         cdr.TryCount = 0;
 
                         logger.debug('[DVP-CDREventListner.ProcessCDR] - [%s] - ================== NEW A LEG PUBLISH TO QUEUE - UUID : [%s] ==================', reqId, cdr.Uuid);
+
+                        publishAbandonCallToQueue(cdr);
 
                         amqpPublisher('CDRQUEUE', cdr);
                     }
