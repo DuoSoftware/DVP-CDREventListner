@@ -21,5 +21,5 @@ WORKDIR /usr/local/src/cdreventlistner
 COPY package*.json ./
 RUN npm install
 COPY . .
-EXPOSE 8816
+EXPOSE 8824
 CMD [ "node", "app.js" ]
