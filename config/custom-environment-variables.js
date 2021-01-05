@@ -40,8 +40,14 @@ module.exports = {
             "hosts": "SYS_REDIS_SENTINEL_HOSTS",
             "port":"SYS_REDIS_SENTINEL_PORT",
             "name":"SYS_REDIS_SENTINEL_NAME"
-        }
+    },
 
+    "Services": 
+    {
+            "fileServiceHost": "SYS_FILESERVICE_HOST",
+            "fileServicePort": "SYS_FILESERVICE_PORT",
+            "fileServiceVersion": "SYS_FILESERVICE_VERSION"
+          
     },
 
     "Mongo":
@@ -51,6 +57,7 @@ module.exports = {
         "dbname":"SYS_MONGO_DB",
         "password":"SYS_MONGO_PASSWORD",
         "user":"SYS_MONGO_USER",
+        "type": "SYS_MONGO_TYPE",
         "replicaset" :"SYS_MONGO_REPLICASETNAME"
     },
 
@@ -64,6 +71,7 @@ module.exports = {
     },
 
     "Host":{
+        "Ip": "HOST_NAME",
         "Port":"HOST_CDREVENTLISTNER_PORT",
         "Version":"HOST_VERSION"
     },
